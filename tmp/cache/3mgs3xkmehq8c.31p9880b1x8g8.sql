@@ -1,0 +1,1 @@
+a:3:{i:0;a:3:{i:0;a:3:{s:2:"id";i:2;s:5:"value";i:1;s:4:"name";s:4:"High";}i:1;a:3:{s:2:"id";i:1;s:5:"value";i:0;s:4:"name";s:6:"Normal";}i:2;a:3:{s:2:"id";i:3;s:5:"value";i:-1;s:4:"name";s:3:"Low";}}i:1;d:1705636850.883724;i:2;s:4:"3600";}

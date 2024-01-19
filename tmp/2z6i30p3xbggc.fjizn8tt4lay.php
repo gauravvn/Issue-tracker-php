@@ -1,0 +1,109 @@
+<form id="dependency_form" class="form-horizontal">
+    <input type="hidden" name="issue_id" value="<?= ($issue['id']) ?>">
+    <div class="form-group">
+        <label class="col-md-5"><b><?= ($dict['task_depends']) ?></b></label>
+        <div class="col-md-3">
+            <input type="text" class="form-control input-sm" name="dependency_id" required>
+        </div>
+        <div class="col-md-2">
+            <select class="form-control input-sm" name="type">
+                <option><?= ($dict['fs']) ?></option>
+                <option><?= ($dict['ff']) ?></option>
+                <option><?= ($dict['ss']) ?></option>
+                <option><?= ($dict['sf']) ?></option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary btn-sm"><?= ($dict['add_dependency']) ?></button>
+        </div>
+    </div>
+</form>
+<?php if (!empty($dependencies)): ?>
+    <div class="table-responsive">
+        <table class="table table-striped table-condensed issue-list dependency-list">
+            <thead>
+                <tr>
+                    <th data-sort="int"><?= ($dict['cols']['id']) ?></th>
+                    <th data-sort="string"><?= ($dict['cols']['title']) ?></th>
+                    <th data-sort="string"><?= ($dict['cols']['type']) ?></th>
+                    <th data-sort="string"><?= ($dict['cols']['author']) ?></th>
+                    <th data-sort="string"><?= ($dict['cols']['assignee']) ?></th>
+                    <th data-sort="int"><?= ($dict['cols']['start']) ?></th>
+                    <th data-sort="int"><?= ($dict['cols']['due']) ?></th>
+                    <th data-sort="int"><?= ($dict['cols']['status']) ?></th>
+                    <th data-sort="int"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach (($dependencies?:[]) as $item): ?>
+                    <tr data-id="<?= ($item['d_id']) ?>" class="<?= ($item['status_closed'] ? 'closed' : '') ?>">
+                        <td><a href="<?= ($BASE) ?>/issues/<?= ($item['id']) ?>"><?= ($item['id']) ?></a></td>
+                        <td><a href="<?= ($BASE) ?>/issues/<?= ($item['id']) ?>"><?= ($this->esc($item['name'])) ?></a></td>
+                        <td><?= ($item['dependency_type']) ?></td>
+                        <td><a href="<?= ($BASE) ?>/user/<?= ($item['author_username']) ?>"><?= ($this->esc($item['author_name'])) ?></a></td>
+                        <td><a href="<?= ($BASE) ?>/user/<?= ($item['owner_username']) ?>"><?= ($this->esc($item['owner_name'])) ?></a></td>
+                        <td data-sort-value="<?= ($item['start_date'] ? strtotime($item['start_date']) : 0) ?>" title="<?= ($item['start_date'] ? date('M j, Y \\a\\t g:ia', strtotime($item['start_date'])) : '') ?>"><?= ($item['start_date'] ? date("n/j/y", strtotime($item['start_date'])) : '') ?></td>
+                        <td data-sort-value="<?= ($item['due_date'] ? strtotime($item['due_date']) : 0) ?>"><?= (!empty($item['due_date']) ? date("n/j", strtotime($item['due_date'])) : "") ?></td>
+                        <td data-sort-value="<?= ($item['status']) ?>"><?= ($item['status_name']) ?></td>
+                        <td><a href="#" class="delete"><span class="fa fa-remove"></span></a></td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+<?php endif; ?>
+<hr>
+<form id="dependent_form" class="form-horizontal">
+    <input type="hidden" name="dependency_id" value="<?= ($issue['id']) ?>">
+    <div class="form-group">
+        <label class="col-md-5"><strong><?= ($dict['task_dependency']) ?></strong></label>
+        <div class="col-md-3">
+            <input type="text" class="form-control input-sm" name="issue_id" required>
+        </div>
+        <div class="col-md-2">
+            <select class="form-control input-sm" name="type">
+                <option><?= ($dict['fs']) ?></option>
+                <option><?= ($dict['ff']) ?></option>
+                <option><?= ($dict['ss']) ?></option>
+                <option><?= ($dict['sf']) ?></option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary btn-sm"><?= ($dict['add_dependent']) ?></button>
+        </div>
+    </div>
+</form>
+<?php if (!empty($dependents)): ?>
+    <div class="table-responsive">
+        <table class="table table-striped table-condensed issue-list dependency-list">
+            <thead>
+                <tr>
+                    <th data-sort="int"><?= ($dict['cols']['id']) ?></th>
+                    <th data-sort="string"><?= ($dict['cols']['title']) ?></th>
+                    <th data-sort="string"><?= ($dict['cols']['type']) ?></th>
+                    <th data-sort="string"><?= ($dict['cols']['author']) ?></th>
+                    <th data-sort="string"><?= ($dict['cols']['assignee']) ?></th>
+                    <th data-sort="int"><?= ($dict['cols']['start']) ?></th>
+                    <th data-sort="int"><?= ($dict['cols']['due']) ?></th>
+                    <th data-sort="int"><?= ($dict['cols']['status']) ?></th>
+                    <th data-sort="int"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach (($dependents?:[]) as $item): ?>
+                    <tr data-id="<?= ($item['d_id']) ?>" class="<?= ($item['status_closed'] ? 'closed' : '') ?>">
+                        <td><a href="<?= ($BASE) ?>/issues/<?= ($item['id']) ?>"><?= ($item['id']) ?></a></td>
+                        <td><a href="<?= ($BASE) ?>/issues/<?= ($item['id']) ?>"><?= ($this->esc($item['name'])) ?></a></td>
+                        <td><?= ($item['dependency_type']) ?></td>
+                        <td><a href="<?= ($BASE) ?>/user/<?= ($item['author_username']) ?>"><?= ($this->esc($item['author_name'])) ?></a></td>
+                        <td><a href="<?= ($BASE) ?>/user/<?= ($item['owner_username']) ?>"><?= ($this->esc($item['owner_name'])) ?></a></td>
+                        <td data-sort-value="<?= ($item['start_date'] ? strtotime($item['start_date']) : 0) ?>" title="<?= ($item['start_date'] ? date('M j, Y \\a\\t g:ia', strtotime($item['start_date'])) : '') ?>"><?= ($item['start_date'] ? date("n/j/y", strtotime($item['start_date'])) : '') ?></td>
+                        <td data-sort-value="<?= ($item['due_date'] ? strtotime($item['due_date']) : 0) ?>"><?= (!empty($item['due_date']) ? date("n/j", strtotime($item['due_date'])) : "") ?></td>
+                        <td data-sort-value="<?= ($item['status']) ?>"><?= ($item['status_name']) ?></td>
+                        <td><a href="#" class="delete"><span class="fa fa-remove"></span></a></td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+<?php endif; ?>

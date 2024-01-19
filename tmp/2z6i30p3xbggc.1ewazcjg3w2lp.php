@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="<?= ($this->lang()) ?>">
+<head>
+    <?php echo $this->render('blocks/head.html',NULL,get_defined_vars(),0); ?>
+</head>
+<body>
+<?php echo $this->render('blocks/navbar.html',NULL,get_defined_vars(),0); ?>
+<div class="container">
+    <?php echo $this->render('blocks/admin/tabs.html',NULL,get_defined_vars(),0); ?>
+    <form action="<?= ($BASE) ?>/admin/config" method="post" id="frm-config">
+        <input type="hidden" name="csrf-token" value="<?= $this->esc($csrf_token) ?>" />
+        <div class="row">
+
+            <div class="col-sm-3">
+                <ul class="nav nav-pills nav-stacked">
+                    <li class="active"><a href="#config-site" data-toggle="tab"><?= ($dict['site_basics']) ?></a></li>
+                    <li><a href="#config-ts" data-toggle="tab"><?= ($dict['issue_types_and_statuses']) ?></a></li>
+                    <li><a href="#config-parse" data-toggle="tab"><?= ($dict['text_parsing']) ?></a></li>
+                    <li><a href="#config-email" data-toggle="tab"><?= ($dict['email_smtp_imap']) ?></a></li>
+                    <li><a href="#config-advanced" data-toggle="tab"><?= ($dict['advanced']) ?></a></li>
+                </ul>
+                <br>
+            </div>
+
+            <div class="col-sm-9 tab-content">
+
+                <div role="tabpanel" class="tab-pane fade in active" id="config-site">
+                    <div class="form-group">
+                        <label class="control-label" for="site-name"><?= ($dict['site_name']) ?></label>
+                        <input type="text" class="form-control" name="site-name" value="<?= ($this->esc($site['name'])) ?>" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label" for="site-description"><?= ($dict['site_description']) ?></label>
+                        <textarea class="form-control input-sm" name="site-description"><?= ($this->esc($site['description'])) ?></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label" for="site-timezone"><?= ($dict['timezone']) ?></label>
+                        <input type="text" class="form-control input-sm" name="site-timezone" value="<?= ($site['timezone']) ?>" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label" for="site-theme"><?= ($dict['default_theme']) ?></label>
+                        <input type="text" class="form-control input-sm" name="site-theme" value="<?= ($this->esc($site['theme'])) ?>" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label" for="site-logo"><?= ($dict['logo']) ?></label>
+                        <input type="text" class="form-control input-sm" name="site-logo" placeholder="(Site Name)" value="<?= ($this->esc($site['logo'] ?? '')) ?>">
+                    </div>
+                </div>
+
+                <div role="tabpanel" class="tab-pane fade" id="config-ts">
+                    <fieldset>
+                        <legend><?= ($dict['issue_types']) ?></legend>
+                        <table class="table table-condensed table-striped">
+                            <thead>
+                                <tr>
+                                    <th><?= ($dict['cols']['id']) ?></th>
+                                    <th><?= ($dict['name']) ?></th>
+                                    <th><?= ($dict['role']) ?></th>
+                                    <th><?= ($dict['cols']['description']) ?></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach (($issue_types?:[]) as $item): ?>
+                                    <tr>
+                                        <td><?= ($item['id']) ?></td>
+                                        <td><?= ($this->esc(isset($dict[$item['name']]) ? $dict[$item['name']] : str_replace('_', ' ', $item['name']))) ?></td>
+                                        <td><?= ($this->esc(ucfirst(isset($dict[$item['role']]) ? $dict[$item['role']] : $item['role']))) ?></td>
+                                        <td style="white-space: pre-wrap;"><?= ($this->esc($item['default_description'])) ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </fieldset>
+                    <br>
+                    <fieldset>
+                        <legend><?= ($dict['issue_statuses']) ?></legend>
+                        <table class="table table-condensed table-striped">
+                            <thead>
+                                <tr>
+                                    <th><?= ($dict['cols']['id']) ?></th>
+                                    <th><?= ($dict['name']) ?></th>
+                                    <th><?= ($dict['closed']) ?></th>
+                                    <th><?= ($dict['taskboard_columns']) ?></th>
+                                    <th><?= ($dict['taskboard_sort']) ?></th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach (($issue_statuses?:[]) as $item): ?>
+                                    <tr>
+                                        <td><?= ($item['id']) ?></td>
+                                        <td><?= ($this->esc(isset($dict[$item['name']]) ? $dict[$item['name']] : str_replace('_', ' ', $item['name']))) ?></td>
+                                        <td><?= ($item['closed'] ? $dict['yes'] : $dict['no']) ?></td>
+                                        <td><?= ($item['taskboard'] ?: '') ?></td>
+                                        <td><?= ($item['taskboard_sort'] ?: '') ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </fieldset>
+                </div>
+
+                <div role="tabpanel" class="tab-pane fade" id="config-parse">
+                    <p><?= ($dict['parser_syntax']) ?></p>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" name="parse-markdown" value="1" autocomplete="off" <?= ($parse['markdown'] ? 'checked' : '') ?>>
+                                Markdown
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" name="parse-textile" value="1" autocomplete="off" <?= ($parse['textile'] ? 'checked' : '') ?>>
+                                Textile (Deprecated)
+                            </label>
+                        </div>
+                    </div>
+                    <p><?= ($dict['advanced_options']) ?></p>
+                    <div class="form-group">
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" name="parse-ids" value="1" <?= ($parse['ids'] ? 'checked' : '') ?>>
+                                <?= ($dict['convert_ids'])."
+" ?>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" name="parse-hashtags" value="1" <?= ($parse['hashtags'] ? 'checked' : '') ?>>
+                                <?= ($dict['convert_hashtags'])."
+" ?>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" name="parse-urls" value="1" <?= ($parse['urls'] ? 'checked' : '') ?>>
+                                <?= ($dict['convert_urls'])."
+" ?>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" name="parse-emoticons" value="1" <?= ($parse['emoticons'] ? 'checked' : '') ?>>
+                                <?= ($dict['convert_emoticons'])."
+" ?>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div role="tabpanel" class="tab-pane fade" id="config-email">
+                    <fieldset>
+                        <legend><?= ($dict['outgoing_mail']) ?></legend>
+                        <div class="form-group">
+                            <label class="control-label" for="mail-from"><?= ($dict['from_address']) ?></label>
+                            <input type="text" class="form-control input-sm" name="mail-from" value="<?= ($this->esc($mail['from'])) ?>" placeholder="<?= ($dict['email_leave_blank']) ?>">
+                        </div>
+                        <p class="alert alert-info"><strong><?= ($dict['config_note']) ?>:</strong> <?= (Base::instance()->format($dict['package_mail_config_note'], $PACKAGE)) ?> </p>
+                    </fieldset>
+                    <br>
+                    <fieldset>
+                        <legend><?= ($dict['incoming_mail']) ?></legend>
+                        <div class="form-group">
+                            <label class="control-label" for="imap-hostname"><?= ($dict['mailbox']) ?></label>
+                            <input type="text" class="form-control input-sm" name="imap-hostname" value="<?= ($this->esc(@$imap['hostname'])) ?>">
+                            <span class="help-block"><a href="https://www.php.net/manual/en/function.imap-open.php#refsect1-function.imap-open-parameters" target="_blank" rel="noreferrer noopener"><?= ($dict['mailbox_help']) ?></a></span>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label" for="imap-username"><?= ($dict['username']) ?></label>
+                            <input type="text" class="form-control input-sm" name="imap-username" value="<?= ($this->esc(@$imap['username'])) ?>">
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label" for="imap-password"><?= ($dict['password']) ?></label>
+                            <input type="text" class="form-control input-sm" name="imap-password" value="<?= (isset($imap['password']) ? str_repeat('*', strlen(@$imap['password'])) : '') ?>">
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label" for="mail-truncate_lines"><?= ($dict['imap_truncate_lines']) ?></label>
+                            <textarea class="form-control input-sm" name="mail-truncate_lines" rows="4"><?= ($this->esc(implode("\n", is_array($mail['truncate_lines']) ? $mail['truncate_lines'] : \Base::instance()->split($mail['truncate_lines'])))) ?></textarea>
+                        </div>
+                        <p class="alert alert-info"><strong><?= ($dict['config_note']) ?>:</strong> <?= (Base::instance()->format($dict['imap_settings_note'], '<code>checkmail.php</code>')) ?></p>
+                    </fieldset>
+                </div>
+
+                <div role="tabpanel" class="tab-pane fade" id="config-advanced">
+                    <h3><?= ($dict['security']) ?></h3>
+                    <div class="form-group">
+                        <label class="control-label"><?= ($dict['min_pass_len']) ?></label>
+                        <input type="number" class="form-control input-sm" name="security-min_pass_len" value="<?= ($security['min_pass_len']) ?>">
+                    </div>
+                    <div class="form-group">
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" name="security-block_ccs" value="1" <?= ($security['block_ccs'] ? 'checked' : '') ?>>
+                                <?= ($dict['censor_credit_card_numbers'])."
+" ?>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" name="security-restrict_access" value="1" <?= ((!empty($security['restrict_access']) && $security['restrict_access']) ? 'checked' : '') ?> aria-describedby="restrictIssueHelp">
+                                <?= ($dict['restrict_access'])."
+" ?>
+                            </label>
+                        </div>
+                        <span id="restrictIssueHelp" class="help-block">
+                            <?= ($dict['restrict_access_detail'])."
+" ?>
+                        </span>
+                    </div>
+
+                    <h3><?= ($dict['general']) ?></h3>
+                    <div class="form-group">
+                        <label class="control-label"><?= ($dict['cookie_expiration']) ?></label>
+                        <input type="text" class="form-control input-sm" name="JAR-expire" value="<?= ($JAR['expire']) ?>">
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label"><?= ($dict['max_upload_size']) ?></label>
+                        <input type="text" class="form-control input-sm" name="files-maxsize" value="<?= ($files['maxsize']) ?>">
+                    </div>
+                    <div class="form-group">
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" name="site-public_registration" value="1" <?= ($site['public_registration'] ? 'checked' : '') ?>>
+                                <?= ($dict['allow_public_registration'])."
+" ?>
+                            </label>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <h3><?= ($dict['core']) ?></h3>
+                    <div class="form-group">
+                        <label class="control-label"><?= ($dict['debug_level']) ?></label>
+                        <input type="text" class="form-control input-sm" value="<?= ($DEBUG) ?>" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label"><?= ($dict['cache_mode']) ?></label>
+                        <input type="text" class="form-control input-sm" value="<?= ($CACHE) ?>" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label"><?= ($dict['demo_user']) ?></label>
+                        <input type="text" class="form-control input-sm" value="<?= ($site['demo'] ?: 'Disabled') ?>" readonly>
+                    </div>
+                    <p class="alert alert-info"><?= (Base::instance()->format($dict['advanced_config_note'],'<code>config</code>')) ?></p>
+                </div>
+
+            </div>
+        </div>
+    </form>
+
+    <?php echo $this->render('blocks/footer.html',NULL,get_defined_vars(),0); ?>
+</div>
+<script type="text/javascript">
+$(document).ready(function() {
+
+    // Auto-select tab if hash is present
+    if(window.location.hash) {
+        $('.nav a').filter('[href=#config-' + window.location.hash.substr(1) + ']').click();
+    }
+
+    // Handle input changes
+    $('#frm-config').on('change', 'input, select, textarea', function(e) {
+        var $el = $(this),
+            val = $el.val();
+
+        if($el.attr('type') == 'checkbox') {
+            val = $el.prop('checked') ? 1 : 0;
+        }
+
+        $.post(BASE + '/admin/config/saveattribute', {
+            attribute: $el.attr('name'),
+            value: val
+        }, function(data) {
+            if(data.error) {
+                showAlert(data.error);
+            } else {
+                $el.parents('.form-group').addClass('has-success');
+                setTimeout(function() {
+                    $el.parents('.form-group').removeClass('has-success');
+                }, 2500);
+            }
+        }, 'json').fail(function() {
+            showAlert('Failed to save attribute');
+        });
+    });
+
+});
+</script>
+</body>
+</html>
